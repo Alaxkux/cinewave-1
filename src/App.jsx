@@ -21,13 +21,15 @@ function AppShell() {
     debounceRef.current = setTimeout(() => setSearchQuery(q), 300);
   }, []);
 
+  const isHome = activePage === "home" || activePage === "seeall";
+
   const renderPage = () => {
     switch (activePage) {
-      case "favorites": return <SavedPage />;
-      case "downloads": return <DownloadsPage />;
-      case "profile":   return <ProfilePage />;
-      case "settings":  return <SettingsPage />;
-      case "seeall":    return <SeeAllPage />;
+      case "favorites": return <div className={styles.pageContainer}><SavedPage /></div>;
+      case "downloads": return <div className={styles.pageContainer}><DownloadsPage /></div>;
+      case "profile":   return <div className={styles.pageContainer}><ProfilePage /></div>;
+      case "settings":  return <div className={styles.pageContainer}><SettingsPage /></div>;
+      case "seeall":    return <div className={styles.pageContainer}><SeeAllPage /></div>;
       default:          return <Home searchQuery={searchQuery} />;
     }
   };

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getBackdropUrl } from "../../services/tmdb";
 import { getGenreLabel, getPlaceholderGradient } from "../../utils/genres";
 import { PlayIcon, DownloadIcon, DotsIcon, ChevronLeft, ChevronRight } from "../ui/Icons";
@@ -6,127 +6,105 @@ import styles from "./HeroSection.module.css";
 
 export default function HeroSection({ movies = [], onSelect }) {
   const [index, setIndex] = useState(0);
-  const [transitioning, setTransitioning] = useState(false);
+  const [fading, setFading] = useState(false);
+  const timerRef = useRef(null);
 
-  const movie = movies[index] || null;
-
-  const navigate = (dir) => {
-    if (transitioning || movies.length < 2) return;
-    setTransitioning(true);
-    setTimeout(() => {
-      setIndex((i) => (i + dir + movies.length) % movies.length);
-      setTransitioning(false);
-    }, 200);
+  const goTo = (i) => {
+    if (fading) return;
+    setFading(true);
+    setTimeout(() => { setIndex(i); setFading(false); }, 250);
   };
 
-  // Auto-rotate every 8s
+  const navigate = (dir) => {
+    goTo((index + dir + movies.length) % movies.length);
+  };
+
+  // Reset auto-rotate whenever index changes
   useEffect(() => {
     if (movies.length < 2) return;
-    const t = setInterval(() => navigate(1), 8000);
-    return () => clearInterval(t);
-  }, [movies.length, transitioning]);
+    clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setFading(true);
+      setTimeout(() => {
+        setIndex(i => (i + 1) % movies.length);
+        setFading(false);
+      }, 250);
+    }, 7000);
+    return () => clearInterval(timerRef.current);
+  }, [movies.length, index]);
 
-  if (!movie) {
-    return (
-      <div className={styles.hero} style={{ background: getPlaceholderGradient(0) }}>
-        <div className={styles.skeleton} />
-      </div>
-    );
-  }
+  const movie = movies[index];
+  if (!movie) return <div className={styles.hero} style={{ background: getPlaceholderGradient(0) }} />;
 
-  const backdropUrl = getBackdropUrl(movie.backdrop_path, "lg");
+  const backdropUrl = getBackdropUrl(movie.backdrop_path, "original");
   const genres = getGenreLabel(movie.genre_ids || []);
   const rating = movie.vote_average?.toFixed(1);
 
   return (
-    <div className={`${styles.hero} ${transitioning ? styles.transitioning : ""}`}>
-      {/* Background */}
-      {backdropUrl ? (
-        <img
-          key={movie.id}
-          src={backdropUrl}
-          alt=""
-          className={styles.backdrop}
-        />
-      ) : (
-        <div
-          className={styles.backdropPlaceholder}
-          style={{ background: getPlaceholderGradient(movie.id) }}
-        />
-      )}
+    <div className={`${styles.hero} ${fading ? styles.fading : ""}`}>
+      {/* Full-width backdrop */}
+      {backdropUrl
+        ? <img key={movie.id} src={backdropUrl} alt="" className={styles.backdrop} />
+        : <div className={styles.backdropPlaceholder} style={{ background: getPlaceholderGradient(movie.id) }} />
+      }
 
       {/* Overlays */}
-      <div className={styles.overlayGradient} />
+      <div className={styles.overlayLeft} />
       <div className={styles.overlayBottom} />
 
-      {/* Top-left badge */}
-      <div className={styles.trendingBadge}>
-        <span className={styles.trendingDot}>●</span>
-        Now Trending
-      </div>
-
-      {/* Rating badge */}
-      {rating && (
-        <div className={styles.ratingBadge}>
-          ⭐ {rating}
+      {/* Top badges */}
+      <div className={styles.topRow}>
+        <div className={styles.trendingBadge}>
+          <span className={styles.dot}>●</span> Now Trending
         </div>
-      )}
+        {rating && <div className={styles.ratingBadge}>⭐ {rating}</div>}
+      </div>
 
       {/* Carousel arrows */}
       {movies.length > 1 && (
-        <div className={styles.arrows}>
-          <button className={styles.arrow} onClick={() => navigate(-1)} aria-label="Previous">
+        <>
+          <button className={`${styles.arrow} ${styles.arrowLeft}`} onClick={() => navigate(-1)} aria-label="Prev">
             <ChevronLeft size={18} />
           </button>
-          <button className={styles.arrow} onClick={() => navigate(1)} aria-label="Next">
+          <button className={`${styles.arrow} ${styles.arrowRight}`} onClick={() => navigate(1)} aria-label="Next">
             <ChevronRight size={18} />
           </button>
-        </div>
-      )}
-
-      {/* Dots */}
-      {movies.length > 1 && (
-        <div className={styles.dots}>
-          {movies.slice(0, 6).map((_, i) => (
-            <button
-              key={i}
-              className={`${styles.dot} ${i === index ? styles.dotActive : ""}`}
-              onClick={() => { setTransitioning(true); setTimeout(() => { setIndex(i); setTransitioning(false); }, 200); }}
-              aria-label={`Slide ${i + 1}`}
-            />
-          ))}
-        </div>
+        </>
       )}
 
       {/* Content */}
       <div className={styles.content}>
         {genres.length > 0 && (
           <div className={styles.genres}>
-            {genres.map((g) => (
-              <span key={g} className={styles.genreTag}>{g}</span>
-            ))}
+            {genres.map(g => <span key={g} className={styles.genreTag}>{g}</span>)}
           </div>
         )}
-
         <h1 className={styles.title}>{movie.title || movie.name}</h1>
-
         <p className={styles.overview}>{movie.overview}</p>
-
         <div className={styles.actions}>
-          <button
-            className={styles.watchBtn}
-            onClick={() => onSelect?.(movie)}
-          >
-            <PlayIcon size={16} /> Watch Now
+          <button className={styles.watchBtn} onClick={() => onSelect?.(movie)}>
+            <PlayIcon size={15} /> Watch Now
           </button>
-          <button className={styles.downloadBtn}>
-            <DownloadIcon size={16} /> Download
+          <button className={styles.downloadBtn} onClick={() => onSelect?.(movie)}>
+            <DownloadIcon size={15} /> Download
           </button>
-          <button className={styles.moreBtn}>
-            <DotsIcon size={16} />
-          </button>
+          <button className={styles.moreBtn}><DotsIcon size={15} /></button>
         </div>
       </div>
+
+      {/* Carousel dots — one per movie, properly linked */}
+      {movies.length > 1 && (
+        <div className={styles.dotsRow}>
+          {movies.map((_, i) => (
+            <button
+              key={i}
+              className={`${styles.dotBtn} ${i === index ? styles.dotActive : ""}`}
+              onClick={() => goTo(i)}
+              aria-label={`Go to slide ${i + 1}`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

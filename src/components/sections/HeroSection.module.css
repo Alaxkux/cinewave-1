@@ -1,300 +1,187 @@
 .hero {
   position: relative;
-  border-radius: var(--radius-xl);
+  width: 100%;
+  border-radius: 20px;
   overflow: hidden;
-  min-height: 320px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  height: 360px;
   flex-shrink: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.25s ease;
 }
 
-.hero.transitioning {
-  opacity: 0;
-}
+.hero.fading { opacity: 0; }
 
 .backdrop {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 8s ease;
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center top;
+  display: block;
 }
 
-.backdropPlaceholder {
-  position: absolute;
-  inset: 0;
-}
+.backdropPlaceholder { position: absolute; inset: 0; }
 
-.overlayGradient {
-  position: absolute;
-  inset: 0;
+/* Gradient overlays */
+.overlayLeft {
+  position: absolute; inset: 0;
   background: linear-gradient(
     to right,
-    rgba(0, 0, 0, 0.75) 0%,
-    rgba(0, 0, 0, 0.3) 60%,
+    rgba(7,7,26,0.92) 0%,
+    rgba(7,7,26,0.6) 40%,
+    rgba(7,7,26,0.1) 70%,
     transparent 100%
   );
 }
-
 .overlayBottom {
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   background: linear-gradient(
     to top,
-    rgba(0, 0, 0, 0.9) 0%,
-    rgba(0, 0, 0, 0.2) 40%,
-    transparent 100%
+    rgba(7,7,26,0.95) 0%,
+    rgba(7,7,26,0.3) 35%,
+    transparent 65%
   );
 }
 
-/* Badges */
+/* Top row badges */
+.topRow {
+  position: absolute; top: 16px; left: 18px; right: 18px;
+  display: flex; justify-content: space-between; align-items: center;
+  z-index: 4;
+}
 .trendingBadge {
-  position: absolute;
-  top: 18px;
-  left: 18px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 20px;
-  padding: 6px 14px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #fff;
-  z-index: 2;
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 20px; padding: 5px 13px;
+  font-size: 12px; font-weight: 600; color: #fff;
 }
-
-.trendingDot {
-  color: #f59e0b;
-  font-size: 10px;
-}
-
+.dot { color: #f59e0b; font-size: 9px; }
 .ratingBadge {
-  position: absolute;
-  top: 18px;
-  right: 68px;
-  background: rgba(245, 158, 11, 0.18);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  border-radius: 10px;
-  padding: 5px 10px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #fcd34d;
-  z-index: 2;
+  background: rgba(245,158,11,0.15);
+  border: 1px solid rgba(245,158,11,0.3);
+  border-radius: 8px; padding: 4px 10px;
+  font-size: 12px; font-weight: 700; color: #fcd34d;
 }
 
 /* Arrows */
-.arrows {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  z-index: 2;
-}
-
 .arrow {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
-  color: #fff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition);
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 34px; height: 34px; border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(8px);
+  color: #fff; cursor: pointer; z-index: 4;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s ease;
 }
-
-.arrow:hover {
-  background: rgba(255,255,255,0.2);
-  transform: scale(1.05);
-}
-
-/* Dots */
-.dots {
-  position: absolute;
-  bottom: 100px;
-  right: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  z-index: 2;
-}
-
-.dot {
-  width: 4px;
-  height: 14px;
-  border-radius: 3px;
-  background: rgba(255,255,255,0.3);
-  border: none;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-
-.dot.dotActive {
-  background: #fff;
-  height: 22px;
-}
+.arrow:hover { background: rgba(255,255,255,0.18); }
+.arrowLeft { left: 12px; }
+.arrowRight { right: 12px; }
 
 /* Content */
 .content {
-  position: relative;
-  padding: 24px;
-  z-index: 2;
-  animation: fadeIn 0.4s ease;
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 20px 20px 56px;
+  z-index: 3;
+  animation: fadeUp 0.3s ease;
 }
-
-@keyframes fadeIn {
+@keyframes fadeUp {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.genres {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 10px;
-  flex-wrap: wrap;
-}
-
+.genres { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
 .genreTag {
-  font-size: 11px;
-  color: rgba(255,255,255,0.75);
+  font-size: 11px; color: rgba(255,255,255,0.7);
   background: rgba(255,255,255,0.1);
   border: 1px solid rgba(255,255,255,0.15);
-  padding: 3px 10px;
-  border-radius: 6px;
-  backdrop-filter: blur(8px);
+  padding: 3px 10px; border-radius: 6px;
 }
 
 .title {
   font-family: var(--font-display);
-  font-size: 26px;
-  font-weight: 800;
-  line-height: 1.15;
-  margin-bottom: 10px;
-  max-width: 520px;
-  color: #fff;
-  text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  font-size: 26px; font-weight: 800; color: #fff;
+  line-height: 1.15; margin-bottom: 8px;
+  max-width: 500px;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.5);
 }
 
 .overview {
-  font-size: 12.5px;
-  color: rgba(255, 255, 255, 0.65);
-  max-width: 440px;
-  line-height: 1.65;
-  margin-bottom: 20px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  font-size: 12.5px; color: rgba(255,255,255,0.6);
+  max-width: 420px; line-height: 1.6; margin-bottom: 18px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 
 /* Action buttons */
-.actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  align-items: center;
-}
+.actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
 .watchBtn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #fff;
-  color: #0a0a1a;
-  border: none;
-  border-radius: 12px;
-  padding: 11px 22px;
-  font-weight: 700;
-  font-size: 13px;
-  cursor: pointer;
-  font-family: var(--font-body);
-  transition: all var(--transition);
-  box-shadow: 0 4px 16px rgba(255,255,255,0.2);
+  display: flex; align-items: center; gap: 8px;
+  background: #fff; color: #07071a;
+  border: none; border-radius: 10px;
+  padding: 10px 20px; font-weight: 700; font-size: 13px;
+  cursor: pointer; font-family: var(--font-body);
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 14px rgba(255,255,255,0.15);
 }
-
-.watchBtn:hover {
-  transform: scale(1.03);
-  box-shadow: 0 6px 24px rgba(255,255,255,0.3);
-}
+.watchBtn:hover { transform: scale(1.03); box-shadow: 0 6px 20px rgba(255,255,255,0.25); }
 
 .downloadBtn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(10px);
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(8px);
   border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 12px;
-  color: #fff;
-  padding: 11px 20px;
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  font-family: var(--font-body);
-  transition: all var(--transition);
+  border-radius: 10px; color: #fff;
+  padding: 10px 18px; font-weight: 600; font-size: 13px;
+  cursor: pointer; font-family: var(--font-body);
+  transition: all 0.2s;
 }
-
-.downloadBtn:hover {
-  background: rgba(255,255,255,0.2);
-  transform: translateY(-1px);
-}
+.downloadBtn:hover { background: rgba(255,255,255,0.18); }
 
 .moreBtn {
-  width: 42px;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 40px; height: 40px; border-radius: 10px;
   background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(8px);
   border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 12px;
-  color: #fff;
-  cursor: pointer;
-  transition: all var(--transition);
+  color: #fff; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
 }
-
 .moreBtn:hover { background: rgba(255,255,255,0.18); }
 
+/* Dots — bottom center, one per movie */
+.dotsRow {
+  position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 6px; z-index: 4;
+}
+.dotBtn {
+  width: 20px; height: 4px; border-radius: 2px;
+  background: rgba(255,255,255,0.3); border: none; cursor: pointer;
+  transition: all 0.25s ease; padding: 0;
+}
+.dotBtn.dotActive {
+  background: #fff; width: 32px;
+}
+
+/* Skeleton */
 .skeleton {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg,
-    rgba(255,255,255,0.03) 25%,
-    rgba(255,255,255,0.07) 50%,
-    rgba(255,255,255,0.03) 75%
-  );
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.03) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
 
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
+/* Mobile */
 @media (max-width: 768px) {
-  .hero { min-height: 260px; border-radius: var(--radius-lg); }
+  .hero { height: 260px; border-radius: 14px; }
   .title { font-size: 18px; }
   .overview { display: none; }
-  .dots { display: none; }
-  .ratingBadge { display: none; }
+  .arrowLeft { left: 6px; }
+  .arrowRight { right: 6px; }
+  .content { padding: 14px 14px 50px; }
 }
-
 @media (max-width: 480px) {
-  .content { padding: 16px; }
-  .title { font-size: 16px; }
-  .watchBtn { padding: 9px 16px; font-size: 12px; }
-  .downloadBtn { padding: 9px 14px; font-size: 12px; }
+  .hero { height: 220px; }
+  .title { font-size: 15px; }
+  .watchBtn, .downloadBtn { padding: 8px 14px; font-size: 12px; }
 }
