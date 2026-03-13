@@ -3,7 +3,7 @@
   width: 100%;
   border-radius: 20px;
   overflow: hidden;
-  height: 360px;
+  height: 520px;
   flex-shrink: 0;
   transition: opacity 0.25s ease;
 }
@@ -173,7 +173,7 @@
 
 /* Mobile */
 @media (max-width: 768px) {
-  .hero { height: 260px; border-radius: 14px; }
+  .hero { height: 380px; border-radius: 14px; }
   .title { font-size: 18px; }
   .overview { display: none; }
   .arrowLeft { left: 6px; }
