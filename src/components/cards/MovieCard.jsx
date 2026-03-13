@@ -1,21 +1,16 @@
 import { useState } from "react";
 import { getPosterUrl } from "../../services/tmdb";
 import { getGenreInfo, getPlaceholderGradient } from "../../utils/genres";
-import { PlayIcon, DotsIcon, HeartIcon } from "../ui/Icons";
+import { PlayIcon, HeartIcon } from "../ui/Icons";
 import { useApp } from "../../context/AppContext";
 import styles from "./MovieCard.module.css";
 
-export default function MovieCard({ movie, onSelect, size = "md" }) {
+export default function MovieCard({ movie, onSelect, size = "md", showBookmark = false }) {
   const [hovered, setHovered] = useState(false);
   const { toggleFavorite, isFavorite } = useApp();
   const fav = isFavorite(movie.id);
   const genre = getGenreInfo(movie.genre_ids || []);
   const imgUrl = getPosterUrl(movie.poster_path, "md");
-
-  const handleFav = (e) => {
-    e.stopPropagation();
-    toggleFavorite(movie);
-  };
 
   return (
     <div
@@ -25,54 +20,39 @@ export default function MovieCard({ movie, onSelect, size = "md" }) {
       onMouseLeave={() => setHovered(false)}
       onClick={() => onSelect?.(movie)}
     >
-      {imgUrl && (
-        <img
-          src={imgUrl}
-          alt={movie.title || movie.name}
-          className={styles.img}
-          loading="lazy"
-        />
-      )}
+      {imgUrl && <img src={imgUrl} alt={movie.title || movie.name} className={styles.img} loading="lazy" />}
 
-      {/* Gradient overlay */}
       <div className={styles.overlay} />
 
-      {/* Genre badge */}
+      {/* Genre badge — ALWAYS visible */}
       <div className={styles.genre} style={{ background: genre.color }}>
         {genre.label}
       </div>
 
-      {/* Favorite button */}
+      {/* Favorite / Bookmark */}
       <button
         className={`${styles.favBtn} ${fav ? styles.favActive : ""}`}
-        onClick={handleFav}
-        aria-label="Favorite"
+        onClick={(e) => { e.stopPropagation(); toggleFavorite(movie); }}
+        aria-label="Save"
       >
-        <HeartIcon size={13} filled={fav} />
+        <HeartIcon size={12} filled={fav} />
       </button>
 
-      {/* Dots menu */}
-      <button className={`${styles.dotsBtn} ${hovered ? styles.visible : ""}`}>
-        <DotsIcon size={14} />
-      </button>
-
-      {/* Bottom content */}
+      {/* Bottom */}
       <div className={styles.info}>
         <div className={styles.titleRow}>
-          <div className={styles.textBlock}>
-            <p className={`${styles.title} clamp-2`}>{movie.title || movie.name}</p>
-            {size !== "sm" && (
-              <p className={`${styles.desc} clamp-1`}>{movie.overview}</p>
-            )}
-          </div>
+          <p className={`${styles.title} clamp-2`}>{movie.title || movie.name}</p>
           <button
             className={styles.playBtn}
             onClick={(e) => { e.stopPropagation(); onSelect?.(movie); }}
             aria-label="Play"
           >
-            <PlayIcon size={16} />
+            <PlayIcon size={14} />
           </button>
         </div>
+        {size !== "sm" && (
+          <p className={styles.genreLabel}>{genre.label}</p>
+        )}
       </div>
     </div>
   );

@@ -1,11 +1,18 @@
 import { useState, useCallback, useRef } from "react";
-import { AppProvider } from "./context/AppContext";
+import { AppProvider, useApp } from "./context/AppContext";
 import Sidebar from "./components/layout/Sidebar";
 import TopNav from "./components/layout/TopNav";
 import Home from "./pages/Home";
+import SavedPage from "./pages/Saved";
+import DownloadsPage from "./pages/Downloads";
+import ProfilePage from "./pages/Profile";
+import SettingsPage from "./pages/Settings";
+import SeeAllPage from "./pages/SeeAll";
 import "./styles/global.css";
+import styles from "./App.module.css";
 
 function AppShell() {
+  const { activePage } = useApp();
   const [searchQuery, setSearchQuery] = useState("");
   const debounceRef = useRef(null);
 
@@ -14,17 +21,25 @@ function AppShell() {
     debounceRef.current = setTimeout(() => setSearchQuery(q), 300);
   }, []);
 
+  const renderPage = () => {
+    switch (activePage) {
+      case "favorites": return <SavedPage />;
+      case "downloads": return <DownloadsPage />;
+      case "profile":   return <ProfilePage />;
+      case "settings":  return <SettingsPage />;
+      case "seeall":    return <SeeAllPage />;
+      default:          return <Home searchQuery={searchQuery} />;
+    }
+  };
+
   return (
-    <div style={{
-      display: "flex",
-      height: "100vh",
-      overflow: "hidden",
-      background: "var(--bg-primary)",
-    }}>
+    <div className={styles.app}>
       <Sidebar />
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: 0 }}>
+      <div className={styles.main}>
         <TopNav onSearch={handleSearch} />
-        <Home searchQuery={searchQuery} />
+        <div className={styles.content}>
+          {renderPage()}
+        </div>
       </div>
     </div>
   );
