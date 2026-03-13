@@ -1,0 +1,37 @@
+.row { display: flex; flex-direction: column; gap: 0; }
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.seeAll {
+  font-size: 12px;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  font-family: var(--font-body);
+  transition: opacity var(--transition);
+}
+
+.seeAll:hover { opacity: 0.75; text-decoration: underline; }
+
+.scrollRow { padding-bottom: 6px; }
+
+.skeletonCard {
+  width: 165px;
+  height: 240px;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
