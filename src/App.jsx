@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { AppProvider, useApp } from "./context/AppContext";
 import Sidebar from "./components/layout/Sidebar";
 import TopNav from "./components/layout/TopNav";
@@ -20,17 +20,35 @@ import styles from "./App.module.css";
 function AppShell() {
   const { activePage, user, updateUser } = useApp();
   const [searchQuery, setSearchQuery] = useState("");
-  const debounceRef = useRef(null);
-  const contentRef  = useRef(null);
+  const debounceRef  = useRef(null);
+  const contentRef   = useRef(null);
+  // Track scroll positions per page so we can restore them
+  const scrollPositions = useRef({});
+  const prevPage = useRef(activePage);
 
   const handleSearch = useCallback((q) => {
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => setSearchQuery(q), 300);
   }, []);
 
-  const handleSearchFocus = useCallback(() => {}, []);
+  // Save scroll position before page changes, restore after
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    const leaving = prevPage.current;
+    // Save position of page we're leaving
+    scrollPositions.current[leaving] = el.scrollTop;
+    prevPage.current = activePage;
+    // For detail page: don't scroll — stay in place
+    // For other pages: restore saved position or go to 0
+    if (activePage === "detail") {
+      // keep scroll exactly where it is
+      return;
+    }
+    const savedPos = scrollPositions.current[activePage] ?? 0;
+    requestAnimationFrame(() => { el.scrollTop = savedPos; });
+  }, [activePage]);
 
-  // Show onboarding on first visit
   const showOnboarding = !user?.onboarded;
 
   const renderPage = () => {
@@ -40,7 +58,7 @@ function AppShell() {
       case "profile":   return <div className={styles.pageContainer}><ProfilePage /></div>;
       case "settings":  return <div className={styles.pageContainer}><SettingsPage /></div>;
       case "seeall":    return <div className={styles.pageContainer}><SeeAllPage /></div>;
-      case "detail":    return <MovieDetailPage />;
+      case "detail":    return <div className={styles.pageContainer}><MovieDetailPage /></div>;
       case "browse":    return <div className={styles.pageContainer}><BrowsePage /></div>;
       default:          return <Home searchQuery={searchQuery} contentRef={contentRef} />;
     }
@@ -48,38 +66,24 @@ function AppShell() {
 
   return (
     <div className={styles.app}>
-      {/* Onboarding overlay */}
-      {showOnboarding && (
-        <Onboarding onComplete={() => updateUser({ onboarded: true })} />
-      )}
-
+      {showOnboarding && <Onboarding onComplete={() => updateUser({ onboarded: true })} />}
       <Sidebar />
-
       <div className={styles.main}>
-        <TopNav onSearch={handleSearch} onSearchFocus={handleSearchFocus} />
+        <TopNav onSearch={handleSearch} />
         <div className={styles.content} ref={contentRef}>
           <PageTransition pageKey={activePage}>
             {renderPage()}
           </PageTransition>
         </div>
       </div>
-
-      {/* Mobile bottom nav */}
       <BottomNav onSearchTap={() => {
-        const inp = document.querySelector("input[placeholder*='Search']");
-        inp?.focus();
+        document.querySelector("input[placeholder*='Search']")?.focus();
       }} />
-
-      {/* Global toast container */}
       <ToastProvider />
     </div>
   );
 }
 
 export default function App() {
-  return (
-    <AppProvider>
-      <AppShell />
-    </AppProvider>
-  );
+  return <AppProvider><AppShell /></AppProvider>;
 }

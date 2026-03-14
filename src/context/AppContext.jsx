@@ -41,7 +41,7 @@ export function AppProvider({ children }) {
   }, []);
 
   const markNotifsSeen = useCallback(() => setNotifSeen(true), []);
-  const clearNotifs    = useCallback(() => { setNotifications(SITE_UPDATES); setNotifSeen(true); }, []);
+  const clearNotifs    = useCallback(() => { setNotifications([]); setNotifSeen(true); }, []);
   const unreadCount = notifSeen ? 0 : notifications.length;
 
   // Favorites
