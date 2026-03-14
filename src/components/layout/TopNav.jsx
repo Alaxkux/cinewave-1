@@ -80,9 +80,6 @@ export default function TopNav({ onSearch }) {
 
   return (
     <header className={styles.topNav}>
-      <button className={styles.mobileMenu} onClick={() => setSidebarOpen(o => !o)} aria-label="Menu">
-        <MenuIcon size={22}/>
-      </button>
 
       {/* Search with live suggestions */}
       <div className={`${styles.searchWrap} ${focused ? styles.searchFocused : ""}`} ref={searchRef}>

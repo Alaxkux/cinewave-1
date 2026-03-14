@@ -1,9 +1,9 @@
-.page { display:flex; flex-direction:column; gap:14px; animation:fadeIn 0.3s ease; max-width:680px; margin:0 auto; width:100%; }
+.page { display:flex; flex-direction:column; gap:14px; animation:fadeIn 0.3s ease; width:100%; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
 /* Profile card */
 .card { border-radius:var(--radius-xl); overflow:hidden; background:var(--bg-card); border:1px solid var(--border); }
-.cover { height:90px; background:linear-gradient(135deg,#6366f1 0%,#a855f7 50%,#ec4899 100%); opacity:0.75; }
+.cover { height:140px; background:linear-gradient(135deg,#6366f1 0%,#a855f7 50%,#ec4899 100%); opacity:0.75; }
 .cardBody { padding:0 20px 20px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:12px; }
 
 .avatarWrap { position:relative; margin-top:-40px; cursor:pointer; }
@@ -30,7 +30,7 @@
 .cancelBtn { flex:1; padding:9px; border-radius:9px; background:var(--bg-card); border:1px solid var(--border); color:var(--text-secondary); font-size:13px; font-weight:600; cursor:pointer; font-family:var(--font-body); }
 
 /* Stats row */
-.statsRow { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.statsRow { display:grid; grid-template-columns:repeat(3,1fr); max-width:none; gap:10px; }
 .statCard { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px 12px; display:flex; flex-direction:column; align-items:center; gap:5px; transition:border-color 0.2s; }
 .statCard:hover { border-color:var(--border-light); }
 .statIcon { font-size:20px; }
@@ -38,11 +38,11 @@
 .statLabel { font-size:11px; color:var(--text-muted); font-weight:500; }
 
 /* Sections */
-.section { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px; }
+.section { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px; }
 .sectionTitle { font-family:var(--font-display); font-size:13px; font-weight:700; color:var(--text-primary); margin-bottom:14px; text-transform:uppercase; letter-spacing:0.5px; }
 
 /* Watchtime rings */
-.ringsRow { display:flex; justify-content:space-around; align-items:center; gap:12px; }
+.ringsRow { display:flex; justify-content:space-evenly; align-items:center; gap:12px; }
 .ringItem { display:flex; flex-direction:column; align-items:center; gap:8px; }
 .ring { position:relative; display:flex; align-items:center; justify-content:center; }
 .ringInner { position:absolute; display:flex; flex-direction:column; align-items:center; justify-content:center; }
@@ -58,7 +58,7 @@
 .genrePct { font-size:11px; color:var(--text-muted); width:32px; text-align:right; }
 
 /* Badges */
-.badgeGrid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.badgeGrid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
 .badge { display:flex; flex-direction:column; align-items:center; gap:5px; padding:12px 8px; border-radius:12px; border:1px solid var(--border); text-align:center; transition:all 0.2s; }
 .badgeEarned { background:rgba(99,102,241,0.1); border-color:rgba(99,102,241,0.3); }
 .badgeLocked { opacity:0.4; filter:grayscale(0.8); }

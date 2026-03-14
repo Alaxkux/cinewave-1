@@ -20,33 +20,28 @@ import styles from "./App.module.css";
 function AppShell() {
   const { activePage, user, updateUser } = useApp();
   const [searchQuery, setSearchQuery] = useState("");
-  const debounceRef  = useRef(null);
-  const contentRef   = useRef(null);
-  // Track scroll positions per page so we can restore them
+  const debounceRef    = useRef(null);
+  const contentRef     = useRef(null);
   const scrollPositions = useRef({});
-  const prevPage = useRef(activePage);
+  const prevPage       = useRef(activePage);
 
   const handleSearch = useCallback((q) => {
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => setSearchQuery(q), 300);
   }, []);
 
-  // Save scroll position before page changes, restore after
   useEffect(() => {
     const el = contentRef.current;
     if (!el) return;
     const leaving = prevPage.current;
-    // Save position of page we're leaving
+    // Save position of page being left
     scrollPositions.current[leaving] = el.scrollTop;
     prevPage.current = activePage;
-    // For detail page: don't scroll — stay in place
-    // For other pages: restore saved position or go to 0
-    if (activePage === "detail") {
-      // keep scroll exactly where it is
-      return;
-    }
-    const savedPos = scrollPositions.current[activePage] ?? 0;
-    requestAnimationFrame(() => { el.scrollTop = savedPos; });
+    // Detail page: stay exactly where user clicked — no scroll
+    if (activePage === "detail") return;
+    // All other pages: restore saved position or start at 0
+    const saved = scrollPositions.current[activePage] ?? 0;
+    requestAnimationFrame(() => { el.scrollTop = saved; });
   }, [activePage]);
 
   const showOnboarding = !user?.onboarded;
@@ -55,7 +50,7 @@ function AppShell() {
     switch (activePage) {
       case "favorites": return <div className={styles.pageContainer}><SavedPage /></div>;
       case "downloads": return <div className={styles.pageContainer}><DownloadsPage /></div>;
-      case "profile":   return <div className={styles.pageContainer}><ProfilePage /></div>;
+      case "profile":   return <div className={styles.pageWide}><ProfilePage /></div>;
       case "settings":  return <div className={styles.pageContainer}><SettingsPage /></div>;
       case "seeall":    return <div className={styles.pageContainer}><SeeAllPage /></div>;
       case "detail":    return <div className={styles.pageContainer}><MovieDetailPage /></div>;

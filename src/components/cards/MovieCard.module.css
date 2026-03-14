@@ -1,4 +1,3 @@
-/* Base card — always aspect-ratio based so grid fills evenly */
 .card {
   position: relative;
   border-radius: var(--radius-md);
@@ -7,16 +6,7 @@
   background: var(--bg-card);
   aspect-ratio: 2/3;
   width: 100%;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  will-change: transform;
-}
-
-/* Hover — applied on desktop, also triggers on .hovered for touch */
-.card:hover,
-.card.hovered {
-  transform: translateY(-6px) scale(1.03);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-  z-index: 2;
+  /* NO transform/scale on hover — card stays still */
 }
 
 .img {
@@ -30,19 +20,8 @@
   background: linear-gradient(
     to top,
     rgba(0,0,0,0.88) 0%,
-    rgba(0,0,0,0.15) 45%,
+    rgba(0,0,0,0.1) 45%,
     transparent 100%
-  );
-  transition: opacity 0.25s ease;
-}
-.card:hover .overlay,
-.card.hovered .overlay {
-  opacity: 1;
-  background: linear-gradient(
-    to top,
-    rgba(0,0,0,0.92) 0%,
-    rgba(0,0,0,0.35) 55%,
-    rgba(0,0,0,0.08) 100%
   );
 }
 
@@ -55,7 +34,7 @@
   z-index: 3; pointer-events: none;
 }
 
-/* Fav button — appears on hover */
+/* Fav button — appears on card hover (cursor over card area) */
 .favBtn {
   position: absolute; top: 8px; right: 8px;
   background: rgba(0,0,0,0.5);
@@ -63,28 +42,27 @@
   border-radius: 50%; width: 28px; height: 28px;
   display: flex; align-items: center; justify-content: center;
   color: rgba(255,255,255,0.6); cursor: pointer; z-index: 3;
-  transition: all 0.2s;
-  opacity: 0; transform: scale(0.8);
+  opacity: 0;
+  transition: opacity 0.2s, background 0.2s, transform 0.15s;
 }
-.card:hover .favBtn,
-.card.hovered .favBtn { opacity: 1; transform: scale(1); }
+/* Show fav btn on card hover — no card movement */
+.card:hover .favBtn { opacity: 1; }
+.favBtn:hover {
+  background: rgba(239,68,68,0.25);
+  transform: scale(1.1);
+}
 .favBtn.favActive {
-  opacity: 1; transform: scale(1);
+  opacity: 1;
   color: #ef4444;
   background: rgba(239,68,68,0.2);
   border-color: rgba(239,68,68,0.4);
 }
 
-/* Info bar at bottom */
+/* Bottom info */
 .info {
   position: absolute; bottom: 0; left: 0; right: 0;
   padding: 10px; z-index: 2;
-  transform: translateY(4px);
-  transition: transform 0.25s ease;
 }
-.card:hover .info,
-.card.hovered .info { transform: translateY(0); }
-
 .titleRow {
   display: flex; align-items: flex-end;
   justify-content: space-between; gap: 6px;
@@ -93,33 +71,31 @@
   font-size: 11px; font-weight: 700; color: #fff;
   line-height: 1.3; flex: 1;
   font-family: var(--font-display);
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
 }
 .genreLabel {
   font-size: 10px; color: rgba(255,255,255,0.45);
   margin-top: 3px;
 }
 
-/* Play button */
+/* Play button — shows on card hover, animates on its own hover */
 .playBtn {
   background: rgba(255,255,255,0.9);
   border: none; border-radius: 50%;
   width: 30px; height: 30px;
   display: flex; align-items: center; justify-content: center;
   color: #0a0a1a; cursor: pointer; flex-shrink: 0;
-  transition: transform 0.2s, box-shadow 0.2s;
-  opacity: 0; transform: scale(0.7);
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.15s;
 }
-.card:hover .playBtn,
-.card.hovered .playBtn {
-  opacity: 1; transform: scale(1);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+.card:hover .playBtn { opacity: 1; }
+.playBtn:hover {
+  transform: scale(1.12);
+  box-shadow: 0 4px 14px rgba(255,255,255,0.3);
 }
 
 /* Fixed size variants for horizontal rows */
 .md  { width: 160px; aspect-ratio: 2/3; flex-shrink: 0; }
 .sm  { width: 130px; aspect-ratio: 2/3; flex-shrink: 0; }
 .lg  { width: 185px; aspect-ratio: 2/3; flex-shrink: 0; }
-
-/* In a grid context, width comes from parent — override fixed widths */
-.gridCard { width: 100% !important; flex-shrink: unset; }
