@@ -1,28 +1,18 @@
 .page {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-  overflow-x: hidden;
+  display: flex; flex-direction: column;
+  min-height: 100%; overflow-x: hidden;
 }
 
-/* Hero — zero padding, bleeds full width */
-.heroWrap {
-  padding: 12px 12px 0;
-}
+/* Hero: 5px sides only */
+.heroWrap { padding: 5px 5px 0; }
 
-/* All inner content — consistent 12px padding all sides */
+/* All inner content: 5px all sides */
 .inner {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-  padding: 16px 12px 12px;
+  display: flex; flex-direction: column; gap: 26px;
+  padding: 12px 5px 5px;
 }
 
 @media (max-width: 768px) {
-  .heroWrap { padding: 8px 8px 0; }
-  .inner { padding: 12px 8px 8px; gap: 22px; }
-}
-@media (max-width: 480px) {
-  .heroWrap { padding: 6px 6px 0; }
-  .inner { padding: 10px 6px 6px; gap: 18px; }
+  .heroWrap { padding: 5px 5px 0; }
+  .inner { gap: 20px; padding: 10px 5px 5px; }
 }

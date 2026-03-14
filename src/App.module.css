@@ -1,23 +1,13 @@
 .app {
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
+  display: flex; height: 100vh; overflow: hidden;
   background: var(--bg-primary);
 }
-
 .main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  min-width: 0;
+  flex: 1; display: flex; flex-direction: column;
+  overflow: hidden; min-width: 0;
 }
-
-/* Single scrollable content area */
 .content {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
+  flex: 1; overflow-y: auto; overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: rgba(255,255,255,0.08) transparent;
 }
@@ -25,20 +15,13 @@
 .content::-webkit-scrollbar-track { background: transparent; }
 .content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
 
-/* Inner page wrapper — used for ALL non-home pages */
-/* Gives 10px margin containment on all sides */
+/* All inner pages: 5px margin + extra bottom padding for mobile bottom nav */
 .pageContainer {
-  padding: 16px 12px;
-  max-width: 1100px;
-  margin: 0 auto;
-  width: 100%;
-  box-sizing: border-box;
-  min-height: 100%;
+  padding: 5px;
+  width: 100%; box-sizing: border-box; min-height: 100%;
 }
 
 @media (max-width: 768px) {
-  .pageContainer { padding: 12px 8px; }
-}
-@media (max-width: 480px) {
-  .pageContainer { padding: 10px 6px; }
+  /* Push content above the bottom nav (62px) */
+  .content { padding-bottom: 62px; }
 }

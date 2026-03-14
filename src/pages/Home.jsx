@@ -18,41 +18,41 @@ const mk = (id, title, overview, genreIds) => ({
 });
 
 const DEMO_TRENDING = [
-  mk(1, "Spider-Man: Across the Spider-Verse", "Miles Morales catapults across the Multiverse, where he encounters a team of Spider-People charged with protecting its very existence.", [16, 12, 28]),
-  mk(2, "Oppenheimer", "The story of J. Robert Oppenheimer and his role in the development of the atomic bomb.", [18, 36]),
-  mk(3, "Guardians of the Galaxy Vol. 3", "Peter Quill rallies his team on a mission to protect the universe.", [28, 12, 35]),
-  mk(4, "The Flash", "Barry Allen uses his super speed to change the past, but doing so causes unintended consequences.", [14, 28]),
-  mk(5, "Elemental", "In a city where fire, water, land and air residents live together, a fiery young woman and a go-with-the-flow guy discover something elemental.", [16, 35]),
+  mk(1,"Spider-Man: Across the Spider-Verse","Miles Morales catapults across the Multiverse, encountering a team of Spider-People charged with protecting its very existence.",[16,12,28]),
+  mk(2,"Oppenheimer","The story of J. Robert Oppenheimer and his role in the development of the atomic bomb during World War II.",[18,36]),
+  mk(3,"Guardians of the Galaxy Vol. 3","Peter Quill rallies his team on a mission to protect the universe and one of their own.",[28,12,35]),
+  mk(4,"The Flash","Barry Allen uses his super speed to change the past, but faces unintended and disastrous consequences.",[14,28]),
+  mk(5,"Elemental","In a city where fire, water, land and air residents live together, two unlikely souls discover something elemental.",[16,35]),
 ];
-
 const DEMO_POPULAR = [
-  mk(6, "The Flash",    "Barry Allen uses his super speed to change the past.", [14, 28]),
-  mk(7, "Manifest",     "A commercial airliner suddenly reappears after being missing.", [9648, 18]),
-  mk(8, "Elemental",    "Ember and Wade live in a city where elements live together.", [16, 35]),
-  mk(9, "Interstellar", "A farmer sets out on a time travel journey to save Earth.", [878, 18]),
-  mk(10,"Avatar: The Way of Water", "Jake Sully lives with his newfound family on Pandora.", [878, 12]),
-  mk(11,"John Wick: Chapter 4",     "John Wick uncovers a path to defeating The High Table.", [28, 53]),
-  mk(12,"Dune: Part Two",           "Paul Atreides unites with the Fremen to seek revenge.", [878, 12]),
+  mk(6, "The Flash",               "Barry Allen uses his super speed to change the past.", [14,28]),
+  mk(7, "Manifest",                "A commercial airliner suddenly reappears after being missing.", [9648,18]),
+  mk(8, "Elemental",               "Ember and Wade live in a city where elements live together.", [16,35]),
+  mk(9, "Interstellar",            "A team travels through a wormhole in space to ensure humanity's survival.", [878,18]),
+  mk(10,"Avatar: The Way of Water","Jake Sully lives with his newfound family on the planet Pandora.", [878,12]),
+  mk(11,"John Wick: Chapter 4",    "John Wick uncovers a path to defeating The High Table.", [28,53]),
+  mk(12,"Dune: Part Two",          "Paul Atreides unites with the Fremen to seek revenge against the conspirators.", [878,12]),
 ];
-
 const DEMO_TV = [
-  mk(20,"Breaking Bad",     "A chemistry teacher becomes a drug kingpin.", [80, 18]),
-  mk(21,"Stranger Things",  "Strange events unfold in a small Indiana town.", [878, 27]),
-  mk(22,"The Mandalorian",  "A lone bounty hunter travels the outer reaches of the galaxy.", [878, 12]),
-  mk(23,"Game of Thrones",  "Noble families battle for control of the Iron Throne.", [18, 37]),
-  mk(24,"The Boys",         "Superheroes misuse their powers. A group fights back.", [28, 18]),
-  mk(25,"Dark",             "A time-travel conspiracy in a German town.", [9648, 878]),
+  mk(20,"Breaking Bad",    "A chemistry teacher turned drug kingpin.", [80,18]),
+  mk(21,"Stranger Things", "Strange supernatural events in a small Indiana town.", [878,27]),
+  mk(22,"The Mandalorian", "A lone bounty hunter travels the outer reaches of the galaxy.", [878,12]),
+  mk(23,"Game of Thrones", "Noble families battle for control of the Iron Throne.", [18,37]),
+  mk(24,"The Boys",        "Superheroes misuse their powers. A group of vigilantes fight back.", [28,18]),
+  mk(25,"Dark",            "A time-travel conspiracy unfolds in a German town across four eras.", [9648,878]),
+];
+const DEMO_NEW = [
+  mk(40,"Killers of the Flower Moon","Members of the Osage Nation are murdered in 1920s Oklahoma.", [18,80]),
+  mk(41,"Napoleon","An epic of the military leader's rise and fall.", [18,36]),
+  mk(42,"Saltburn","A student becomes obsessed with a classmate's aristocratic family.", [9648,53]),
+  mk(43,"Poor Things","The fantastical evolution of Bella Baxter.", [14,35]),
+  mk(44,"Maestro","A biographical film about Leonard Bernstein.", [18]),
+  mk(45,"Society of the Snow","The true story of the 1972 Andes plane crash.", [18,9648]),
 ];
 
-const DEMO_CONTINUE = [
-  { ...mk(30, "The Secret Agent", "", [9648, 80]),  subtitle: "S1 • E3", progress: 45 },
-  { ...mk(31, "Shelter",          "", [28, 53]),     subtitle: "S2 • E1", progress: 22 },
-  { ...mk(32, "Project Hail Mary","", [878, 18]),    subtitle: "S1 • E5", progress: 10 },
-];
-
-export default function Home({ searchQuery }) {
+export default function Home({ searchQuery, contentRef }) {
   const { data, loading, hasKey, search } = useTMDB();
-  const { continueWatching, activeNav } = useApp();
+  const { continueWatching, activeNav, openMovieDetail } = useApp();
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -62,34 +62,48 @@ export default function Home({ searchQuery }) {
   const tvShows   = hasKey && data.tvShows.length   ? data.tvShows   : DEMO_TV;
   const animation = hasKey && data.animation.length ? data.animation : DEMO_POPULAR.filter(m => m.genre_ids.includes(16));
   const mystery   = hasKey && data.mystery.length   ? data.mystery   : DEMO_POPULAR.filter(m => m.genre_ids.includes(9648));
-  const cwMovies  = continueWatching.length > 0 ? continueWatching : DEMO_CONTINUE;
+  const cwMovies  = continueWatching;
 
-  // Rows change based on activeNav (linked to SortBar)
+  // "Because you watched" — personalized row
+  const lastWatched = cwMovies[0];
+  const becauseRow = lastWatched
+    ? popular.filter(m =>
+        m.id !== lastWatched.id &&
+        m.genre_ids?.some(g => lastWatched.genre_ids?.includes(g))
+      ).slice(0, 7)
+    : [];
+
   const navConfig = {
     "Movies":    [
-      { title: "You might like",   list: popular },
-      { title: "Top Rated",        list: [...popular].sort((a,b) => b.vote_average - a.vote_average) },
-      { title: "Featured TV Series", list: tvShows },
+      { title:"You might like",      list: popular },
+      { title:"Top Rated",           list: [...popular].sort((a,b) => b.vote_average - a.vote_average) },
+      { title:"New This Week",       list: DEMO_NEW },
+      { title:"Featured TV Series",  list: tvShows },
     ],
     "TV Series": [
-      { title: "Popular TV Shows", list: tvShows },
-      { title: "Trending Now",     list: trending },
+      { title:"Popular TV Shows",    list: tvShows },
+      { title:"Trending Now",        list: trending },
+      { title:"New Episodes",        list: DEMO_NEW.slice(0,5) },
     ],
     "Animation": [
-      { title: "Animation Movies", list: animation },
-      { title: "Popular Picks",    list: popular },
+      { title:"Animation Movies",    list: animation },
+      { title:"Popular Picks",       list: popular },
     ],
     "Mystery":   [
-      { title: "Mystery & Thriller", list: mystery },
-      { title: "Also Popular",       list: popular },
+      { title:"Mystery & Thriller",  list: mystery },
+      { title:"Also Popular",        list: popular },
     ],
     "More":      [
-      { title: "Popular",    list: popular },
-      { title: "Trending",   list: trending },
-      { title: "TV Series",  list: tvShows },
+      { title:"Popular",             list: popular },
+      { title:"Trending",            list: trending },
+      { title:"TV Series",           list: tvShows },
     ],
   };
   const rows = navConfig[activeNav] || navConfig["Movies"];
+
+  const handleSelect = (movie) => {
+    setSelectedMovie(movie);
+  };
 
   useEffect(() => {
     if (!searchQuery) { setSearchResults([]); return; }
@@ -104,34 +118,41 @@ export default function Home({ searchQuery }) {
     <div className={styles.page}>
       {searchQuery ? (
         <div className={styles.inner}>
-          <SearchResults query={searchQuery} results={searchResults} loading={searchLoading} onSelect={setSelectedMovie} />
+          <SearchResults query={searchQuery} results={searchResults} loading={searchLoading} onSelect={handleSelect} />
         </div>
       ) : (
         <>
-          {/* Hero — full width, no horizontal padding */}
           <div className={styles.heroWrap}>
-            <HeroSection movies={trending} onSelect={setSelectedMovie} />
+            <HeroSection movies={trending} onSelect={handleSelect} />
           </div>
 
           <div className={styles.inner}>
-            {/* Sort bar */}
             <SortBar />
 
-            {/* Dynamic rows based on sort */}
-            {rows.map(({ title, list }, i) => {
-              // Continue Watching inserted after first row
-              if (i === 1) return (
-                <>
-                  <MovieRow key={title} title={title} movies={list} loading={loading} onSelect={setSelectedMovie} />
-                  <ContinueWatchingRow key="cw" movies={cwMovies} onSelect={setSelectedMovie} />
-                </>
-              );
-              return <MovieRow key={title} title={title} movies={list} loading={loading} onSelect={setSelectedMovie} />;
-            })}
+            {rows.map(({ title, list }, i) => (
+              <div key={title}>
+                <MovieRow title={title} movies={list} loading={loading} onSelect={handleSelect} />
+                {/* Continue Watching after first row */}
+                {i === 0 && cwMovies.length > 0 && (
+                  <div style={{ marginTop: 26 }}>
+                    <ContinueWatchingRow movies={cwMovies} onSelect={handleSelect} />
+                  </div>
+                )}
+                {/* Because you watched — after second row */}
+                {i === 1 && becauseRow.length > 0 && (
+                  <div style={{ marginTop: 26 }}>
+                    <MovieRow
+                      title={`Because you watched "${lastWatched.title || lastWatched.name}"`}
+                      movies={becauseRow}
+                      onSelect={handleSelect}
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
 
-          {/* Footer */}
-          <Footer />
+          <Footer contentRef={contentRef} />
         </>
       )}
 
